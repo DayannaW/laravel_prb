@@ -1,0 +1,103 @@
+@extends('layouts.app')
+
+@section('content')
+<!DOCTYPE html>
+<html lang="en">
+
+@if(session('info'))
+<div class="alert alert-success">
+<strong>{{session('info')}} </strong>
+</div>
+@endif
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REASIGNAR USUARIO</title>
+</head>
+
+<body>
+    <div class="text-center">
+        <h1>REASIGNAR USUARIO</h1>
+    </div>
+    <div class="row justify-content-center mx-5">
+
+        <h2> Datos Actuales</h2>
+        <div class="form-group col-md-7 mb-3">
+            <label for="usuarioAc" class="form-label">Usuario</label>
+            <input type="text" class="form-control" value="{{$linea->nombres_usuario}} {{$linea->apellidos_usuario}}" name="usuarioAc" id="usuarioAc">
+        </div>
+
+        <div class="form-group col-md-7 mb-3">
+            <label for="cuentaA" class="form-label">Cuenta</label>
+            <input type="text" class="form-control" value="{{$linea->cuenta}}" name="cuentaA" id="cuentaA">
+        </div>
+
+        <div class="form-group col-md-7 mb-3">
+            <label for="actividadA" class="form-label">Actividad</label>
+            <input type="text" class="form-control" value="{{$linea->actividad}}" name="actividadA" id="actividadA">
+        </div>
+
+        <h2> Reasignar usuario</h2>
+        <form action="{{url('/lineas/guardarResignar')}}" method="post" class="form-group col-md-7 mb-3">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="numeroLinea" value="{{ $linea->id }}" />
+            <input type="hidden" value="{{$linea->nombres_usuario}} " name="usuarioA" id="usuarioA">
+
+
+            <div class="form-group col-md-7 mb-3">
+                <label for="cuenta" class="form-label">Usuario</label>
+                <select class="form-select" aria-label="Default select example" name="usuario" id="usuario">
+                    <option selected>seleccione un usuario</option>
+                    @foreach ($usuarios as $usuario)
+                    <option value="{{$usuario->id}}">{{$usuario->nombres}} {{$usuario->apellidos}} CI: {{$usuario->cedula}} Cuenta:{{$usuario->cuenta}}</option>
+                    @endforeach
+                </select>
+            </div>
+          <!--  <div class="form-group col-md-7 mb-3">
+                <label for="nombres" class="form-label">Nombres</label>
+                <input type="text" class="form-control" name="nombres" id="nombres">
+            </div>
+
+            <div class="form-group col-md-7 mb-3">
+                <label for="apellidos" class="form-label">Apellidos</label>
+                <input type="text" class="form-control" name="apellidos" id="apellidos">
+            </div>
+
+            <div class="form-group col-md-7 mb-3">
+                <label for="cuenta" class="form-label">Cuenta</label>
+                <select class="form-select" aria-label="Default select example" name="cuenta" id="cuenta">
+                    <option selected>seleccione</option>
+                    @foreach ($cuentas as $cuenta)
+                    <option value="{{$cuenta->nombreCuenta}}">{{$cuenta->nombreCuenta}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group col-md-7 mb-3">
+                <label for="actividad" class="form-label">Actividad</label>
+                <select class="form-select" aria-label="Default select example" name="actividad">
+                    <option selected>seleccione</option>
+                    @foreach ($actividades as $actividad)
+                    <option value="{{$actividad->nombreCargo}}">{{$actividad->nombreCargo}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group col-md-7 mb-3">
+                <label for="responsable" class="form-label">Responsable</label>
+                <input type="text" class="form-control" name="responsable" id="responsable">
+            </div>
+-->
+
+            <input type="submit" value="Reasignar Usuario">
+
+        </form>
+    </div>
+
+
+</body>
+
+</html>
+@endsection

@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+
+.options_menu {
+    list-style: none;
+    position: relative;
+    height: 100%;
+    --clip: polygon(0 0, 100% 0%, 100% 0, 0 0);
+    --transform: rotate(-90deg);
+
+}
+
+.options_menu:hover {
+    --clip: polygon(0 0, 100% 0%, 100% 100%, 0% 100%);
+    --transform: rotate(0);
+    z-index: 99999;
+}
+
+.menu_container {
+    list-style: none;
+    transition: clip-path .3s;
+    clip-path: var(--clip);
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: max-content;
+    transform: translateY(100%);
+    background-color: rgb(8, 53, 109);
+}
+
+.menu_link {
+    color: white;
+    text-decoration: none;
+    padding: 0 30px;
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.menu_link--inside {
+    padding: 10px 50px 10px 10px;
+    list-style: none;
+}
+
+.menu_link--inside:hover {
+    background-color: rgb(255, 83, 166);
+}
+
+thead {
+background-color: rgb(8, 53, 109);
+color: rgb(255, 255, 255);
+}
+
+.btn-primary{
+    background-color: rgb(66, 126, 198);
+}
