@@ -95,30 +95,24 @@ class LineasController extends Controller
     public function guardarReasignar(Request $request)
     {
         $usuario = Usuarios::find($request->usuario);
-
-        if ($usuario['numeroLinea'] == NULL) {
-            $usuarioA = Usuarios::where('nombres', '=', $request->usuarioA)
-                ->update([
-                    'numeroLinea' => NULL,
-                ]);
-
-            $usuario->update(['numeroLinea' => $request['numeroLinea']]);
-            
-            $linea = Lineas::find($request->numeroLinea);
-            $linea->update([
-                'nombres_usuario' => $usuario['nombres'],
-                'apellidos_usuario' => $usuario['apellidos'],
-                'cuenta' => $usuario['cuenta'],
-                'actividad' => $usuario['actividad'],
-                'responsable' => $usuario['responsable'],
+        $usuarioA = Usuarios::where('nombres', '=', $request->usuarioA)
+            ->update([
+                'numeroLinea' => NULL,
             ]);
-           
-            return redirect()->route('lineas.index')->with('info','linea asignada exitosamente');
+        $usuario->update(['numeroLinea' => $request['numeroLinea']]);
 
-        } else {
-            echo "este usuario ya tiene una linea asignada";
-        }
+        $linea = Lineas::find($request->numeroLinea);
+        $linea->update([
+            'nombres_usuario' => $usuario['nombres'],
+            'apellidos_usuario' => $usuario['apellidos'],
+            'cuenta' => $usuario['cuenta'],
+            'actividad' => $usuario['actividad'],
+            'responsable' => $usuario['responsable'],
+        ]);
+
+        return redirect()->route('lineas.index')->with('info', 'linea asignada exitosamente');
     }
+    
 
     public function show()
     {
