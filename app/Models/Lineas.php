@@ -19,6 +19,7 @@ class Lineas extends Model
         'actividad' => 'required',
 		'responsable' => 'required',
         'presupuesto'=> 'required',
+        'estado'=> 'required'
     ];
 
     protected $perPage = 20;
@@ -36,7 +37,8 @@ class Lineas extends Model
         'cuenta',
         'actividad',
         'responsable',
-        'presupuesto'
+        'presupuesto',
+        'estado'
     ];
 
 

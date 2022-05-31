@@ -29,7 +29,7 @@
 
     <div class="row justify-content-center mb-3 mx-5">
 
-        <form action="{{url('lineas/store')}}" method="post">
+        <form class="mb-3" action="{{url('lineas/store')}}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
 

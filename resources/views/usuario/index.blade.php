@@ -78,7 +78,7 @@
                                         <a href="{{ route('lineas.edit', $linea->id) }}" class="menu_link menu_link--inside">Modificar</a>
                                     </li>
                                     <li class="opcion_desplegable">
-                                        <a href="{{ route('lineas.reasignar',$linea->id) }}" class="menu_link menu_link--inside">Reasignar</a>
+                                        <a href="{{ route('usuarios.reasignar',$usuario->id) }}" class="menu_link menu_link--inside">Reasignar</a>
                                     </li>
                                     <li class="opcion_desplegable">
                                         <a href="#" class="menu_link menu_link--inside">Reposicion</a>

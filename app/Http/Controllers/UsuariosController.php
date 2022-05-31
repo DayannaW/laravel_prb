@@ -38,6 +38,38 @@ class UsuariosController extends Controller
         return redirect()->route('usuarios.index');
     }
 
+
+    public function reasignar($id)
+    {
+        $lineas = Lineas::all();
+        $cuentas = Cuentas::all();
+        $actividades = Actividades::all();
+        $usuarios = Usuarios::find($id);
+        return view('usuario.reasignar', compact('lineas', 'cuentas', 'actividades', 'usuarios'));
+    }
+
+
+    public function guardarReasignar(Request $request)
+    {
+        $usuario = Usuarios::find($request->usuario);
+        $usuarioA = Usuarios::where('nombres', '=', $request->usuarioA)
+            ->update([
+                'numeroLinea' => NULL,
+            ]);
+        $usuario->update(['numeroLinea' => $request['numeroLinea']]);
+
+        $linea = Lineas::find($request->numeroLinea);
+        $linea->update([
+            'nombres_usuario' => $usuario['nombres'],
+            'apellidos_usuario' => $usuario['apellidos'],
+            'cuenta' => $usuario['cuenta'],
+            'actividad' => $usuario['actividad'],
+            'responsable' => $usuario['responsable'],
+        ]);
+
+        return redirect()->route('lineas.index')->with('info', 'linea asignada exitosamente');
+    }
+
     public function show()
     {
         //

@@ -52,7 +52,8 @@ class LineasController extends Controller
                 'valor' => $request['valor'],
                 'nombres_usuario' => $request['nombres_usuario'],
                 'apellidos_usuario' => $request['apellidos_usuario'],
-                'presupuesto' => $request['presupuesto']
+                'presupuesto' => $request['presupuesto'],
+                'estado' => 0
             ]);
         }
 
@@ -95,7 +96,27 @@ class LineasController extends Controller
     public function guardarReasignar(Request $request)
     {
         $usuario = Usuarios::find($request->usuario);
-        $usuarioA = Usuarios::where('nombres', '=', $request->usuarioA)
+        dd($usuario);
+
+        if ($usuario->numeroLinea!=NULL){
+            $usuarioA = Usuarios::where('nombres', '=', $request->usuarioA)
+            ->update([
+                'numeroLinea' => NULL,
+            ]);
+
+            Usuarios::create([
+                'cedula' => $usuario['cedula'],
+                'nombres' => $usuario['nombres'],
+                'apellidos' => $usuario['apellidos'],
+                'cuenta' => $usuario['cuenta'],
+                'actividad' => $usuario['actividad'],
+                'numeroLinea' => $request['linea'],
+                'responsable' => $usuario['responsable']
+            ]);
+
+        }
+
+        $usuarioB = Usuarios::where('nombres', '=', $request->usuarioA)
             ->update([
                 'numeroLinea' => NULL,
             ]);

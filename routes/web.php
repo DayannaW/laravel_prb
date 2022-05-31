@@ -28,6 +28,9 @@ Route::get('/usuarios/create', [UsuariosController::class, 'create'])->name('usu
 Route::post('/usuarios/store', [UsuariosController::class, 'store'])->name('usuarios.store');
 Route::get('/usuarios/edit/{id}',[UsuariosController::class, 'edit'])->name('usuarios.edit');
 Route::post('/usuarios/update/{id}',[UsuariosController::class, 'update'])->name('usuarios.update');
+Route::get('/usuarios/reasignar/{id}',[UsuariosController::class, 'reasignar'])->name('usuarios.reasignar');
+Route::post('/usuarios/guardarResignar',[UsuariosController::class, 'guardarReasignar'])->name('usuarios.guardarResignar');
+
 
 Route::get('/lineas', [LineasController::class, 'index'])->name('lineas.index');
 Route::get('/lineas/create', [LineasController::class, 'create'])->name('lineas.create');

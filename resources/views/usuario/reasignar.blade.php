@@ -14,12 +14,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REASIGNAR USUARIO</title>
+    <title>REASIGNAR LINEA</title>
 </head>
 
 <body>
     <div class="text-center">
-        <h1>REASIGNAR USUARIO</h1>
+        <h1>REASIGNAR LINEA</h1>
     </div>
     <div class="row justify-content-center mx-5">
 
@@ -28,11 +28,11 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Nombre</h5>
-                    <p class="form-control">{{$linea->nombres_usuario}} {{$linea->apellidos_usuario}}</p>
+                    <p class="form-control">{{$usuarios->nombres}} {{$usuarios->apellidos}}</p>
                     <h5 class="card-title">Cuenta</h5>
                     <p class="form-control"> 
                         @foreach ($cuentas as $cuenta)
-                        @if ($cuenta->id==$linea->cuenta)
+                        @if ($cuenta->id==$usuarios->cuenta)
                         {{$cuenta->nombreCuenta}}
                         @endif
                         @endforeach
@@ -40,7 +40,7 @@
                     <h5 class="card-title">Actividad</h5>
                     <p class="form-control"> 
                         @foreach ($actividades as $actividad)
-                        @if ($actividad->id==$linea->actividad)
+                        @if ($actividad->id==$usuarios->actividad)
                         {{$actividad->nombreCargo}}
                         @endif
                         @endforeach
@@ -49,25 +49,18 @@
             </div>
         </div>
 
-        <h2> Reasignar usuario</h2>
+        <h2> Reasignar linea</h2>
         <form action="{{url('/lineas/guardarResignar')}}" method="post" class="form-group col-md-7 mb-3">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="numeroLinea" value="{{ $linea->id }}" />
-            <input type="hidden" value="{{$linea->nombres_usuario}} " name="usuarioA" id="usuarioA">
+           
 
 
             <div class="form-group col-md-7 mb-3">
-                <label for="cuenta" class="form-label">Usuario</label>
-                <select class="form-select" aria-label="Default select example" name="usuario" id="usuario">
-                    <option selected>seleccione un usuario</option>
-                    @foreach ($usuarios as $usuario)
-                    <option value="{{$usuario->id}}">{{$usuario->nombres}} {{$usuario->apellidos}} - CI: {{$usuario->cedula}} - Cuenta:
-                        @foreach ($cuentas as $cuenta)
-                        @if ($cuenta->id==$usuario->cuenta)
-                        {{$cuenta->nombreCuenta}}
-                        @endif
-                        @endforeach
-                    </option>
+                <label for="linea" class="form-label">Linea</label>
+                <select class="form-select" aria-label="Default select example" name="linea" id="linea">
+                    <option selected>seleccione una linea</option>
+                    @foreach ($lineas as $linea)
+                    <option value="{{$linea->id}}">{{$linea->numeroLinea}} - Operadora: {{$linea->Operadora}} - Plan: {{$linea->plan}} </option>
                     @endforeach
                 </select>
             </div>

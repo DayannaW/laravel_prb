@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('actividad')->nullable();
             $table->string('responsable')->nullable();
             $table->string('presupuesto')->nullable();
+            $table->string('estado');
             $table->foreign('empresaInterna_id')
                     ->references('id')->on('empresas')
                     ->onDelete('set null');
