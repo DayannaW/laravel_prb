@@ -53,7 +53,7 @@
         <form action="{{url('/lineas/guardarResignar')}}" method="post" class="form-group col-md-7 mb-3">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
             <input type="hidden" name="numeroLinea" value="{{ $linea->id }}" />
-            <input type="hidden" value="{{$linea->nombres_usuario}} " name="usuarioA" id="usuarioA">
+            
 
 
             <div class="form-group col-md-7 mb-3">

@@ -52,7 +52,7 @@
         <h2> Reasignar linea</h2>
         <form action="{{url('/lineas/guardarResignar')}}" method="post" class="form-group col-md-7 mb-3">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-           
+           <input type="hidden" name=usuario value="usuario->id">
 
 
             <div class="form-group col-md-7 mb-3">
