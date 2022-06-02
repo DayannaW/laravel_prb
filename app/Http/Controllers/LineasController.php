@@ -97,72 +97,68 @@ class LineasController extends Controller
     {
         $linea   = Lineas::where('estado', '=', 0,)
                         ->where('id', '=', $request->numeroLinea)
-                        ->update(['estado' => 7]);
+                        ->update(['estado'=>7]);
 
         $usuarioA = Usuarios::where('numeroLinea', '=', $request->numeroLinea)
                         ->update(['numeroLinea' => NULL]);
 
-        $usuario = Usuarios::find($request->usuario);
+        $usuario = Usuarios::where('cedula','=',$request->usuario)->get();
+        //dd($linea);
           
-        if(count($usuario)>1){
-            $usuario->where('numeroLinea', '=', $request->numeroLinea);
-            
-        }
-        else{
+        if(count($usuario)<2){
+            $lineaB   = Lineas::where('estado', '=', 0,)
+                        ->where('id', '=', $request->numeroLinea)
+                        ->get();
             $usuario->update(['numeroLinea' => $request['numeroLinea']]);
             Lineas::create([
-                'numeroLinea' => $linea['numeroLinea'],
-                'operadora' => $linea['operadora'],
-                'planilla' => $linea['planilla'],
-                'plan' => $linea['plan'],
-                'valor' => $linea['valor'],
+                'numeroLinea' => $lineaB['numeroLinea'],
+                'operadora' => $lineaB['operadora'],
+                'planilla' => $lineaB['planilla'],
+                'plan' => $lineaB['plan'],
+                'valor' => $lineaB['valor'],
                 'nombres_usuario' => $usuario['nombres'],
                 'apellidos_usuario' => $usuario['apellidos'],
                 'cuenta' => $usuario['cuenta'],
                 'actividad' => $usuario['actividad'],
                 'responsable' => $usuario['responsable'],
-                'presupuesto' => $linea['presupuesto'],
+                'presupuesto' => $lineaB['presupuesto'],
                 'estado' => 0
             ]);
         }
-
+        else{
+            //dd($usuario);
+            $usuarioU = Usuarios::where('cedula','=',$request->usuario)->take(1)->get();
+            $lineaC   = Lineas::where('estado', '=', 0,)
+                        ->where('id', '=', $request->numeroLinea)
+                        ->get();
         
-
-
-        
-
-        Usuarios::create([
-            'cedula' => $usuario['cedula'],
-            'nombres' => $usuario['nombres'],
-            'apellidos' => $usuario['apellidos'],
-            'cuenta' => $usuario['cuenta'],
-            'actividad' => $usuario['actividad'],
-            'numeroLinea' => $request['numeroLinea'],
-            'responsable' => $usuario['responsable']
-        ]);
-
-
-        dd($usuario);
-
-        if ($usuario->numeroLinea != NULL) {
-        } else {
-            $usuarioB = Usuarios::where('nombres', '=', $request->usuarioA)
-                ->update([
-                    'numeroLinea' => NULL,
-                ]);
-            $usuario->update(['numeroLinea' => $request['numeroLinea']]);
-
-            $linea = Lineas::find($request->numeroLinea);
-            $linea->update([
+            //dd($linea);
+            Lineas::create([
+                'numeroLinea' => $lineaC['numeroLinea'],
+                'operadora' => $lineaC['operadora'],
+                'planilla' => $lineaC['planilla'],
+                'plan' => $lineaC['plan'],
+                'valor' => $lineaC['valor'],
                 'nombres_usuario' => $usuario['nombres'],
                 'apellidos_usuario' => $usuario['apellidos'],
                 'cuenta' => $usuario['cuenta'],
                 'actividad' => $usuario['actividad'],
                 'responsable' => $usuario['responsable'],
+                'presupuesto' => $lineaC['presupuesto'],
+                'estado' => 0
             ]);
-        }
 
-
+            Usuarios::create([
+                'cedula' => $usuario['cedula'],
+                'nombres' => $usuario['nombres'],
+                'apellidos' => $usuario['apellidos'],
+                'cuenta' => $usuario['cuenta'],
+                'actividad' => $usuario['actividad'],
+                'numeroLinea' => $request['numeroLinea'],
+                'responsable' => $usuario['responsable']
+            ]);   
+        } 
+        //dd($usuario);
         return redirect()->route('lineas.index')->with('info', 'linea asignada exitosamente');
     }
 

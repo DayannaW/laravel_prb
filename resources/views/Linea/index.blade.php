@@ -26,9 +26,9 @@
                     <button type="button" class="btn btn-outline-secondary">CSV</button>
                 </div>
                 <div class="btn-group mb-3">
-                    @can('lineas.create')
+                    
                     <a type="button" class="btn btn-primary" aria-label="Input group example" href="{{url('/lineas/create')}}">Crear</a>
-                    @endcan
+                   
                 </div>
             </div>
         </div>

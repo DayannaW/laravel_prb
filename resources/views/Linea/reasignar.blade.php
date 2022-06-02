@@ -61,7 +61,7 @@
                 <select class="form-select" aria-label="Default select example" name="usuario" id="usuario">
                     <option selected>seleccione un usuario</option>
                     @foreach ($usuarios as $usuario)
-                    <option value="{{$usuario->id}}">{{$usuario->nombres}} {{$usuario->apellidos}} - CI: {{$usuario->cedula}} - Cuenta:
+                    <option value="{{$usuario->cedula}}">{{$usuario->nombres}} {{$usuario->apellidos}} - CI: {{$usuario->cedula}} - Cuenta:
                         @foreach ($cuentas as $cuenta)
                         @if ($cuenta->id==$usuario->cuenta)
                         {{$cuenta->nombreCuenta}}
