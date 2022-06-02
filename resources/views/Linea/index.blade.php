@@ -25,11 +25,7 @@
                     <button type="button" class="btn btn-outline-secondary">Excel</button>
                     <button type="button" class="btn btn-outline-secondary">CSV</button>
                 </div>
-                <div class="btn-group mb-3">
-                    @can('lineas.create')
-                    <a type="button" class="btn btn-primary" aria-label="Input group example" href="{{url('/lineas/create')}}">Crear</a>
-                    @endcan
-                </div>
+                
             </div>
         </div>
         <div class="container-md">
@@ -51,60 +47,7 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach ($lineas as $linea)
-
-                    <tr>
-                        <td>{{$linea->numeroLinea}}</td>
-                        <td>{{$linea->operadora}}</td>
-                        <td>@foreach ($empresa as $empresas)
-                            @if ($empresas->id==$linea->empresaInterna_id)
-                            {{$empresas->nombreEmpresa}}
-                            @endif
-                            @endforeach
-                        </td>
-                        <td>{{$linea->planilla}}</td>
-                        <td>{{$linea->plan}}</td>
-                        <td>{{$linea->observacion}} </td>
-                        <td>{{$linea->valor}}</td>
-                        <td>{{$linea->nombres_usuario}} {{$linea->apellidos_usuario}}</td>
-                        <td>@foreach ($cuentas as $cuenta)
-                            @if ($cuenta->id==$linea->cuenta)
-                            {{$cuenta->nombreCuenta}}
-                            @endif
-                            @endforeach</td>
-                        <td>@foreach ($actividades as $actividad)
-                            @if ($actividad->id==$linea->actividad)
-                            {{$actividad->nombreCargo}}
-                            @endif
-                            @endforeach</td>
-                        <td>{{$linea->responsable}}</td>
-                        <td>{{$linea->presupuesto}} </td>
-                        <td class="menu_opciones">
-
-                            <div type="button" class="options_menu">
-                                <button class="menu_link  btn btn-primary">Opciones</button>
-                                <ul class="menu_container">
-                                    <li class="opcion_desplegable">
-                                        <a href="{{ route('lineas.edit', $linea->id) }}" class="menu_link menu_link--inside">Modificar</a>
-                                    </li>
-                                    <li class="opcion_desplegable">
-                                        <a href="{{ route('lineas.reasignar',$linea->id) }}" class="menu_link menu_link--inside">Reasignar</a>
-                                    </li>
-                                    <li class="opcion_desplegable">
-                                        <a href="#" class="menu_link menu_link--inside">Reposicion</a>
-                                    </li>
-                                    <li class="opcion_desplegable">
-                                        <a href="#" class="menu_link menu_link--inside">Inhabilitar</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-
-                  
-                </tbody>
+                
             </table>
         </div>
     </div>
