@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('empresaInterna_id')->nullable();
             $table->string('planilla');
             $table->string('plan');
-            $table->string('observacion');
+            $table->string('observacion')->nullable();
             $table->Integer('valor');
             $table->string('nombres_usuario')->nullable();
             $table->string('apellidos_usuario')->nullable();

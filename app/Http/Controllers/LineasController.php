@@ -15,7 +15,7 @@ class LineasController extends Controller
 
     public function index()
     {
-        $lineas = Lineas::all();
+        $lineas = Lineas::where('estado','!=',7)->get();
         $usuarios = Usuarios::all();
         $empresa = Empresa::all();
         $cuentas = Cuentas::all();
@@ -95,39 +95,47 @@ class LineasController extends Controller
 
     public function guardarReasignar(Request $request)
     {
+        //actualizando estado de la linea 
         $linea   = Lineas::where('estado', '=', 0,)
                         ->where('id', '=', $request->numeroLinea)
                         ->update(['estado'=>7]);
 
-        $usuarioA = Usuarios::where('numeroLinea', '=', $request->numeroLinea)
-                        ->update(['numeroLinea' => NULL]);
+        //desvincular la linea del usuario anterior
+        $usuarioA = Usuarios::where('numeroLinea', $request->numeroLinea)->get();
+                       // ->update(['numeroLinea' => NULL]);
+           // dd($usuarioA);
 
-        $usuario = Usuarios::where('cedula','=',$request->usuario)->get();
-        //dd($linea);
-          
+        $usuario = Usuarios::where('cedula',$request->usuario)->get();
+        
+        //comprobando si existen dos lineas con el mismo usuario  
         if(count($usuario)<2){
-            $lineaB   = Lineas::where('estado', '=', 0,)
-                        ->where('id', '=', $request->numeroLinea)
-                        ->get();
-            $usuario->update(['numeroLinea' => $request['numeroLinea']]);
+           
+            $lineaB   = Lineas::find($request->numeroLinea);
+            $us_up = Usuarios::where('cedula',$request->usuario)->update(['numeroLinea' => $request['numeroLinea']]);
+            $us = $usuario[0];
+           // dd($us);  
+            
             Lineas::create([
                 'numeroLinea' => $lineaB['numeroLinea'],
                 'operadora' => $lineaB['operadora'],
+                'empresaInterna_id' => $lineaB['empresaInterna_id'],
                 'planilla' => $lineaB['planilla'],
                 'plan' => $lineaB['plan'],
+                'observacion' => $lineaB['observacion'],
                 'valor' => $lineaB['valor'],
-                'nombres_usuario' => $usuario['nombres'],
-                'apellidos_usuario' => $usuario['apellidos'],
-                'cuenta' => $usuario['cuenta'],
-                'actividad' => $usuario['actividad'],
-                'responsable' => $usuario['responsable'],
+                'nombres_usuario' => $us['nombres'],
+                'apellidos_usuario' => $us['apellidos'],
+                'cuenta' => $us['cuenta'],
+                'actividad' => $us['actividad'],
+                'responsable' => $us['responsable'],
                 'presupuesto' => $lineaB['presupuesto'],
                 'estado' => 0
             ]);
         }
         else{
             //dd($usuario);
-            $usuarioU = Usuarios::where('cedula','=',$request->usuario)->take(1)->get();
+            $usuario_u = Usuarios::where('cedula','=',$request->usuario)->take(1)->get();
+            $us_ar = $usuario_u[0];
             $lineaC   = Lineas::where('estado', '=', 0,)
                         ->where('id', '=', $request->numeroLinea)
                         ->get();
@@ -136,29 +144,31 @@ class LineasController extends Controller
             Lineas::create([
                 'numeroLinea' => $lineaC['numeroLinea'],
                 'operadora' => $lineaC['operadora'],
+                'empresaInterna_id' => $lineaC['empresaInterna_id'],
                 'planilla' => $lineaC['planilla'],
                 'plan' => $lineaC['plan'],
+                'observacion' => $lineaC['observacion'],
                 'valor' => $lineaC['valor'],
-                'nombres_usuario' => $usuario['nombres'],
-                'apellidos_usuario' => $usuario['apellidos'],
-                'cuenta' => $usuario['cuenta'],
-                'actividad' => $usuario['actividad'],
-                'responsable' => $usuario['responsable'],
+                'nombres_usuario' => $us_ar['nombres'],
+                'apellidos_usuario' => $us_ar['apellidos'],
+                'cuenta' => $us_ar['cuenta'],
+                'actividad' => $us_ar['actividad'],
+                'responsable' => $us_ar['responsable'],
                 'presupuesto' => $lineaC['presupuesto'],
                 'estado' => 0
             ]);
 
             Usuarios::create([
-                'cedula' => $usuario['cedula'],
-                'nombres' => $usuario['nombres'],
-                'apellidos' => $usuario['apellidos'],
-                'cuenta' => $usuario['cuenta'],
-                'actividad' => $usuario['actividad'],
+                'cedula' => $us_ar['cedula'],
+                'nombres' => $us_ar['nombres'],
+                'apellidos' => $us_ar['apellidos'],
+                'cuenta' => $us_ar['cuenta'],
+                'actividad' => $us_ar['actividad'],
                 'numeroLinea' => $request['numeroLinea'],
-                'responsable' => $usuario['responsable']
+                'responsable' => $us_ar['responsable']
             ]);   
         } 
-        //dd($usuario);
+        //dd($us_ar);
         return redirect()->route('lineas.index')->with('info', 'linea asignada exitosamente');
     }
 
