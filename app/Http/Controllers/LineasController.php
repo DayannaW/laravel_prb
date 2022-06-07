@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LineasExport;
 use App\Models\Lineas;
 use App\Models\Empresa;
 use App\Models\Usuarios;
@@ -9,13 +10,14 @@ use App\Models\Cuentas;
 use App\Models\Actividades;
 use Illuminate\Http\Request;
 use Laravel\Ui\Presets\React;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LineasController extends Controller
 {
 
     public function index()
     {
-        $lineas = Lineas::where('estado','!=',7)->get();
+        $lineas = Lineas::where('estado', '!=', 7)->paginate(5);
         $usuarios = Usuarios::all();
         $empresa = Empresa::all();
         $cuentas = Cuentas::all();
@@ -95,27 +97,20 @@ class LineasController extends Controller
 
     public function guardarReasignar(Request $request)
     {
-        //actualizando estado de la linea 
-        $linea   = Lineas::where('estado', '=', 0,)
-                        ->where('id', '=', $request->numeroLinea)
-                        ->update(['estado'=>7]);
+        $linea   = Lineas::where('estado', '=', 0,)                                       //actualizando estado de la linea, de  0 a 7 
+            ->where('id', '=', $request->numeroLinea)
+            ->update(['estado' => 7]);
 
-        //desvincular la linea del usuario anterior
-        $usuarioA = Usuarios::where('numeroLinea', $request->numeroLinea)->get();
-                       // ->update(['numeroLinea' => NULL]);
-           // dd($usuarioA);
-
-        $usuario = Usuarios::where('cedula',$request->usuario)->get();
-        
-        //comprobando si existen dos lineas con el mismo usuario  
-        if(count($usuario)<2){
-           
+        $usuarioA = Usuarios::where('numeroLinea', $request->numeroLinea)->get();         //desvincular la linea del usuario anterior si lo tiene
+        if (count($usuarioA) != 0){
+            $usA = $usuarioA[0];
+            $usA->update(['numeroLinea' => NULL]);
+        }
+        $usuario = Usuarios::where('cedula', $request->usuario)->get();                   //comprobando si existen dos lineas con el mismo usuario  
+        if (count($usuario) < 2) {
             $lineaB   = Lineas::find($request->numeroLinea);
-            $us_up = Usuarios::where('cedula',$request->usuario)->update(['numeroLinea' => $request['numeroLinea']]);
             $us = $usuario[0];
-           // dd($us);  
-            
-            Lineas::create([
+            $nuevaLinea = Lineas::create([
                 'numeroLinea' => $lineaB['numeroLinea'],
                 'operadora' => $lineaB['operadora'],
                 'empresaInterna_id' => $lineaB['empresaInterna_id'],
@@ -131,16 +126,26 @@ class LineasController extends Controller
                 'presupuesto' => $lineaB['presupuesto'],
                 'estado' => 0
             ]);
-        }
-        else{
-            //dd($usuario);
-            $usuario_u = Usuarios::where('cedula','=',$request->usuario)->take(1)->get();
+            if ($us->numeroLinea != NULL) {                                             //si el unico usuario existente ya tiene linea asignada
+                Usuarios::create([                                                      //crea un nuevo registro de usuario con otra linea
+                    'cedula' => $us['cedula'],
+                    'nombres' => $us['nombres'],
+                    'apellidos' => $us['apellidos'],
+                    'cuenta' => $us['cuenta'],
+                    'actividad' => $us['actividad'],
+                    'numeroLinea' => $nuevaLinea['id'],
+                    'responsable' => $us['responsable']
+                ]);
+            } else {                                                               //asigna la linea al campo vacio             
+                $us_up = Usuarios::where('cedula', $request->usuario)
+                                ->update(['numeroLinea' => $nuevaLinea['id']]);
+            }
+        } else {
+            $usuario_u = Usuarios::where('cedula', '=', $request->usuario)->take(1)->get();
             $us_ar = $usuario_u[0];
             $lineaC   = Lineas::where('estado', '=', 0,)
-                        ->where('id', '=', $request->numeroLinea)
-                        ->get();
-        
-            //dd($linea);
+                ->where('id', '=', $request->numeroLinea)
+                ->get();
             Lineas::create([
                 'numeroLinea' => $lineaC['numeroLinea'],
                 'operadora' => $lineaC['operadora'],
@@ -166,16 +171,36 @@ class LineasController extends Controller
                 'actividad' => $us_ar['actividad'],
                 'numeroLinea' => $request['numeroLinea'],
                 'responsable' => $us_ar['responsable']
-            ]);   
-        } 
-        //dd($us_ar);
+            ]);
+        }
         return redirect()->route('lineas.index')->with('info', 'linea asignada exitosamente');
     }
 
-
-    public function show()
+    public function exportarExcel()
     {
-        echo 'helloo';
+        return Excel::download(new LineasExport, 'ListadoLineas.xlsx');
+    }
+
+    public function exportarCsv()
+    {
+        return Excel::download(new LineasExport, 'ListadoLineas.csv');
+    }
+
+    public function buscar(Request $request)
+    {
+        $texto= $request['texto'];
+        $lineas = Lineas::where('estado', '!=', 7)
+                         ->where('nombres_usuario','LIKE','%'.$texto.'%')
+                         ->orwhere('apellidos_usuario','LIKE','%'.$texto.'%')
+                         ->orwhere('numeroLinea','LIKE','%'.$texto.'%')
+                         ->orwhere('operadora','LIKE','%'.$texto.'%')
+                         ->orwhere('responsable','LIKE','%'.$texto.'%')
+                         ->paginate(5);;
+        $empresa = Empresa::select('id','nombreEmpresa')->get();
+        $cuentas = Cuentas::select('id','nombreCuenta')->get();
+        $actividades = Actividades::select('id','nombreCargo')->get();
+
+        return view('linea.index',compact('lineas', 'empresa', 'cuentas', 'actividades'));
     }
 
 

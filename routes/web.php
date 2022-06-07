@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LineasController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\UserController;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Routing\RouteAction;
 
 /*
@@ -39,6 +40,8 @@ Route::get('/lineas/edit/{id}',[LineasController::class, 'edit'])->name('lineas.
 Route::match(['get', 'post'],'/lineas/update/{id}',[LineasController::class, 'update'])->name('lineas.update');
 Route::get('/lineas/reasignar/{id}',[LineasController::class, 'reasignar'])->name('lineas.reasignar');
 Route::post('/lineas/guardarResignar',[LineasController::class, 'guardarReasignar'])->name('lineas.guardarResignar');
-
+Route::get('/lineas/exportar/excel',[LineasController::class, 'exportarExcel'])->name('lineas.exportarExcel');
+Route::get('/lineas/exportar/csv',[LineasController::class, 'exportarCsv'])->name('lineas.exportarCsv');
+Route::get('/lineas/buscar',[LineasController::class, 'buscar'])->name('lineas.buscar');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

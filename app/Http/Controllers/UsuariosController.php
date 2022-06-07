@@ -41,7 +41,10 @@ class UsuariosController extends Controller
 
     public function reasignar($id)
     {
-        $lineas = Lineas::all();
+        $lineas = Lineas::where('nombres_usuario', NULL)
+                        ->where('estado',0)
+                        ->get();
+        //dd($lineas);
         $cuentas = Cuentas::all();
         $actividades = Actividades::all();
         $usuarios = Usuarios::find($id);
@@ -51,23 +54,27 @@ class UsuariosController extends Controller
 
     public function guardarReasignar(Request $request)
     {
-        $usuario = Usuarios::find($request->usuario);
-        $usuarioA = Usuarios::where('nombres', '=', $request->usuarioA)
-            ->update([
-                'numeroLinea' => NULL,
-            ]);
-        $usuario->update(['numeroLinea' => $request['numeroLinea']]);
-
-        $linea = Lineas::find($request->numeroLinea);
-        $linea->update([
+        $usuario = Usuarios::find($request->usuario);       //encuentro el usuario al que le voy a asignar la linea
+        $act_linea = Lineas::find($request->linea)->update(['estado'=>7]);   //cambio estado a linea desabilitada           
+        $datosL = Lineas::find($request->linea);
+        $nuevaLinea= Lineas::create([
+            'numeroLinea'=> $datosL['numeroLinea'],
+            'operadora'=> $datosL['operadora'],
+            'empresaInterna_id'=> $datosL['empresaInterna_id'],
+            'planilla'=> $datosL['planilla'],
+            'plan'=> $datosL['plan'],
+            'observacion'=> $datosL['observacion'],
+            'valor'=> $datosL['valor'],
             'nombres_usuario' => $usuario['nombres'],
             'apellidos_usuario' => $usuario['apellidos'],
             'cuenta' => $usuario['cuenta'],
             'actividad' => $usuario['actividad'],
             'responsable' => $usuario['responsable'],
+            'presupuesto'=> $datosL['presupuesto'],
+            'estado'=> 0,
         ]);
-
-        return redirect()->route('lineas.index')->with('info', 'linea asignada exitosamente');
+        $usuario->update(['numeroLinea' => $nuevaLinea['id']]);                     //asigno al usuario con la nueva linea creada
+        return redirect()->route('usuarios.index')->with('info', 'linea asignada exitosamente');
     }
 
     public function show()

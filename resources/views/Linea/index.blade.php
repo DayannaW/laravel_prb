@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -23,16 +22,19 @@
             <div class="btn-toolbar justify-content-between " role="toolbar" aria-label="Toolbar with button groups">
                 <div class="btn-group mb-3" role="group" aria-label="First group">
                     <button type="button" class="btn btn-outline-secondary">Copiar</button>
-                    <button type="button" class="btn btn-outline-secondary">Excel</button>
-                    <button type="button" class="btn btn-outline-secondary">CSV</button>
+                    <a class="btn btn-outline-secondary" href="{{route('lineas.exportarExcel')}}">Excel</a>
+                    <a class="btn btn-outline-secondary" href="{{route('lineas.exportarCsv')}}">CSV</a>
                 </div>
-                
+
+                <form action="{{route('lineas.buscar')}}" method="get" class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Escriba un nombre" name="texto">
+                    <input class="btn btn-primary" type="submit" id="button-addon2" value="Buscar">
+                </form>
+
                 <div class="btn-group mb-3">
-                    
                     <a type="button" class="btn btn-primary" aria-label="Input group example" href="{{url('/lineas/create')}}">Crear</a>
-                   
                 </div>
-                
+
             </div>
         </div>
         <div class="container-md">
@@ -55,66 +57,73 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($lineas as $linea)
+                    @if(count($lineas)<=0) <tr>
+                        <td colspan="8">No existen registros</td>
+                        </tr>
+                        @else
+                        @foreach ($lineas as $linea)
+                        <tr>
+                            <td>{{$linea->numeroLinea}}</td>
+                            <td>{{$linea->operadora}}</td>
+                            <td>@foreach ($empresa as $empresas)
+                                @if ($empresas->id==$linea->empresaInterna_id)
+                                {{$empresas->nombreEmpresa}}
+                                @endif
+                                @endforeach
+                            </td>
+                            <td>{{$linea->planilla}}</td>
+                            <td>{{$linea->plan}}</td>
+                            <td>{{$linea->observacion}} </td>
+                            <td>{{$linea->valor}}</td>
+                            <td>{{$linea->nombres_usuario}} {{$linea->apellidos_usuario}}</td>
+                            <td>@foreach ($cuentas as $cuenta)
+                                @if ($cuenta->id==$linea->cuenta)
+                                {{$cuenta->nombreCuenta}}
+                                @endif
+                                @endforeach
+                            </td>
+                            <td>@foreach ($actividades as $actividad)
+                                @if ($actividad->id==$linea->actividad)
+                                {{$actividad->nombreCargo}}
+                                @endif
+                                @endforeach
+                            </td>
+                            <td>{{$linea->responsable}}</td>
+                            <td>{{$linea->presupuesto}} </td>
+                            <td class="menu_opciones">
 
-                    <tr>
-                        <td>{{$linea->numeroLinea}}</td>
-                        <td>{{$linea->operadora}}</td>
-                        <td>@foreach ($empresa as $empresas)
-                            @if ($empresas->id==$linea->empresaInterna_id)
-                            {{$empresas->nombreEmpresa}}
-                            @endif
-                            @endforeach
-                        </td>
-                        <td>{{$linea->planilla}}</td>
-                        <td>{{$linea->plan}}</td>
-                        <td>{{$linea->observacion}} </td>
-                        <td>{{$linea->valor}}</td>
-                        <td>{{$linea->nombres_usuario}} {{$linea->apellidos_usuario}}</td>
-                        <td>@foreach ($cuentas as $cuenta)
-                            @if ($cuenta->id==$linea->cuenta)
-                            {{$cuenta->nombreCuenta}}
-                            @endif
-                            @endforeach</td>
-                        <td>@foreach ($actividades as $actividad)
-                            @if ($actividad->id==$linea->actividad)
-                            {{$actividad->nombreCargo}}
-                            @endif
-                            @endforeach</td>
-                        <td>{{$linea->responsable}}</td>
-                        <td>{{$linea->presupuesto}} </td>
-                        <td class="menu_opciones">
+                                <div type="button" class="options_menu">
+                                    <button class="menu_link  btn btn-primary">Opciones</button>
+                                    <ul class="menu_container">
+                                        <li class="opcion_desplegable">
+                                            <a href="{{ route('lineas.edit', $linea->id) }}" class="menu_link menu_link--inside">Modificar</a>
+                                        </li>
+                                        <li class="opcion_desplegable">
+                                            <a href="{{ route('lineas.reasignar',$linea->id) }}" class="menu_link menu_link--inside">Reasignar</a>
+                                        </li>
+                                        <li class="opcion_desplegable">
+                                            <a href="#" class="menu_link menu_link--inside">Reposicion</a>
+                                        </li>
+                                        <li class="opcion_desplegable">
+                                            <a href="#" class="menu_link menu_link--inside">Inhabilitar</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @endif
 
-                            <div type="button" class="options_menu">
-                                <button class="menu_link  btn btn-primary">Opciones</button>
-                                <ul class="menu_container">
-                                    <li class="opcion_desplegable">
-                                        <a href="{{ route('lineas.edit', $linea->id) }}" class="menu_link menu_link--inside">Modificar</a>
-                                    </li>
-                                    <li class="opcion_desplegable">
-                                        <a href="{{ route('lineas.reasignar',$linea->id) }}" class="menu_link menu_link--inside">Reasignar</a>
-                                    </li>
-                                    <li class="opcion_desplegable">
-                                        <a href="#" class="menu_link menu_link--inside">Reposicion</a>
-                                    </li>
-                                    <li class="opcion_desplegable">
-                                        <a href="#" class="menu_link menu_link--inside">Inhabilitar</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-
-                  
                 </tbody>
             </table>
+           
         </div>
+        {!!$lineas->links()!!}
     </div>
 
-   
 
-    <script src="js/app.js"> </script>
+
+   
 </body>
 
 </html>
