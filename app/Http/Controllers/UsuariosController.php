@@ -32,7 +32,6 @@ class UsuariosController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request);
         $usuario = Usuarios::create($request->all());
 
         return redirect()->route('usuarios.index');
@@ -54,7 +53,7 @@ class UsuariosController extends Controller
 
     public function guardarReasignar(Request $request)
     {
-        $usuario = Usuarios::find($request->usuario);       //encuentro el usuario al que le voy a asignar la linea
+        $usuario = Usuarios::find($request->usuario);                        //encuentro el usuario al que le voy a asignar la linea
         $act_linea = Lineas::find($request->linea)->update(['estado'=>7]);   //cambio estado a linea desabilitada           
         $datosL = Lineas::find($request->linea);
         $nuevaLinea= Lineas::create([

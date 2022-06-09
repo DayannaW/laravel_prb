@@ -7,17 +7,21 @@ use App\Models\Lineas;
 use App\Models\Empresa;
 use App\Models\Usuarios;
 use App\Models\Cuentas;
+use App\Models\User;
 use App\Models\Actividades;
 use Illuminate\Http\Request;
 use Laravel\Ui\Presets\React;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class LineasController extends Controller
 {
 
     public function index()
     {
-        $lineas = Lineas::where('estado', '!=', 7)->paginate(5);
+        //dd(Auth::user()->name);                          ARREGLAR LAS LINEAS QUE VE EL ADMINISTRADOR
+        
+        $lineas=Lineas::where('estado', '!=', 7)->paginate(10);
         $usuarios = Usuarios::all();
         $empresa = Empresa::all();
         $cuentas = Cuentas::all();
@@ -136,7 +140,7 @@ class LineasController extends Controller
                     'numeroLinea' => $nuevaLinea['id'],
                     'responsable' => $us['responsable']
                 ]);
-            } else {                                                               //asigna la linea al campo vacio             
+            } else {                                                                    //asigna la linea al campo vacio             
                 $us_up = Usuarios::where('cedula', $request->usuario)
                                 ->update(['numeroLinea' => $nuevaLinea['id']]);
             }
@@ -188,17 +192,23 @@ class LineasController extends Controller
 
     public function buscar(Request $request)
     {
-        $texto= $request['texto'];
-        $lineas = Lineas::where('estado', '!=', 7)
-                         ->where('nombres_usuario','LIKE','%'.$texto.'%')
-                         ->orwhere('apellidos_usuario','LIKE','%'.$texto.'%')
-                         ->orwhere('numeroLinea','LIKE','%'.$texto.'%')
-                         ->orwhere('operadora','LIKE','%'.$texto.'%')
-                         ->orwhere('responsable','LIKE','%'.$texto.'%')
-                         ->paginate(5);;
+        define('texto',$request['texto'])  ;
         $empresa = Empresa::select('id','nombreEmpresa')->get();
         $cuentas = Cuentas::select('id','nombreCuenta')->get();
         $actividades = Actividades::select('id','nombreCargo')->get();
+        $lineas = Lineas::join('empresas','empresas.id','=','lineas.empresaInterna_id')
+        ->join('cuentas','cuentas.id','=','lineas.cuenta')
+       // dd($lineas);
+         ->where([['estado', '!=', 7]])
+         ->where(function($query){
+            $query->orwhere('nombres_usuario','LIKE','%'.texto.'%')
+            ->orwhere('apellidos_usuario','LIKE','%'.texto.'%')
+            ->orwhere('numeroLinea','LIKE','%'.texto.'%')
+            ->orwhere('operadora','LIKE','%'.texto.'%')
+            ->orwhere('nombreEmpresa','LIKE','%'.texto.'%')
+            ->orwhere('nombreCuenta','LIKE','%'.texto.'%')
+            ->orwhere('responsable','LIKE','%'.texto.'%');
+        })->paginate(10);
 
         return view('linea.index',compact('lineas', 'empresa', 'cuentas', 'actividades'));
     }

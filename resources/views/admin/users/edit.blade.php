@@ -1,6 +1,6 @@
-@extends(layouts.app)
+@extends('layouts.app')
 
-@section(content)
+@section('content')
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +21,7 @@
                 <h5 class="card-title">Nombre</h5>
                 <p class="form-control">{{$usuario->name}}</p>
 
-                <form action="{{route(admin.user.update)}}" method="match">
+                <form action="{{route('admin.user.update')}}" method="match">
                 @foreach ($roles as $role)
                     <div class="form-check">
                     <input type="hidden" value="{{$usuario->id}}" name="usuario" id="usuario">
